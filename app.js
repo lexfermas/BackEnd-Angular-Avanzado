@@ -4,30 +4,38 @@
 
 //Requires: es una importación de librerias, para que el proyecto funcione.
 
-let express = require('express');
-let mongoose = require('mongoose');
+var express = require('express');
+var mongoose = require('mongoose');
+var bodyParser = require('body-parser')
+
+//importar rutas
+var appRoutes = require('./routes/app');
+var usuarioRoutes = require('./routes/usuario');
+var loginRoutes = require('./routes/login');
 
 
 //inicializar variables: es donde se inician las librerias
 
 var app = express();
 
+//body-parser inicializacion
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+
 //conexión a la base de datos
 mongoose.connection.openUri('mongodb://localhost:27017/hospitalDB', (err, res)=>{
     if(err) throw err;
 
-    console.log("Data base exit: \x1b[32monline\x1b[0m");
+    console.log("Data base connection: \x1b[32monline\x1b[0m");
 });
 
 
-//rutas
-app.get('/', (req, res, next) =>{
-
-    res.status(200).json({
-        ok: true,
-        mensaje: 'Petición realizada correctamente puerto 200'
-    })
-});
+//rutas (definimos un mireware) se ejecuta antes de que se ejecuten otras rutas
+app.use('/usuario', usuarioRoutes); //'usuario tiene que ser igual al de la DB'
+app.use('/login', loginRoutes);  
+app.use('/', appRoutes);
 
 //escuchar peticiones.
 app.listen(3000, ()=>{
