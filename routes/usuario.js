@@ -17,8 +17,12 @@ var usuarioModels = require('../models/usuario');
 
 app.get('/', (req, res, next) => {
 
+    var desde = req.query.desde || 0; //si viene un parametro "desde" usa el req.query.desde sino usa 0.
+    desde = Number(desde);
     //Query para listar los usuarios en el listado no se muestra el password
     usuarioModels.find({}, 'nombre email img role')
+        .skip(desde) //funcion de mongoose para saltar el numero desde.
+        .limit(5) //para hacer las paginaciones
         .exec(
             (err, todosUsuario) => {
                 if (err) {
@@ -28,9 +32,13 @@ app.get('/', (req, res, next) => {
                         errors: err,
                     });
                 }
-                res.status(200).json({
-                    ok: true,
-                    todosUsuario
+                usuarioModels.count({}, (err,contador) =>{
+
+                    res.status(200).json({
+                        ok: true,
+                        todosUsuario,
+                        total: contador
+                    });
                 });
             });
 });

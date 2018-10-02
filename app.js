@@ -12,6 +12,10 @@ var bodyParser = require('body-parser')
 var appRoutes = require('./routes/app');
 var usuarioRoutes = require('./routes/usuario');
 var loginRoutes = require('./routes/login');
+var hospitalRoutes = require('./routes/hospital');
+var medicoRoutes = require('./routes/medico');
+var busquedaRoutes = require('./routes/busqueda');
+var uploadRoutes = require('./routes/upload');
 
 
 //inicializar variables: es donde se inician las librerias
@@ -32,9 +36,13 @@ mongoose.connection.openUri('mongodb://localhost:27017/hospitalDB', (err, res)=>
 });
 
 
-//rutas (definimos un mireware) se ejecuta antes de que se ejecuten otras rutas
+//rutas (definimos un middleware) se ejecuta antes de que se ejecuten otras rutas
 app.use('/usuario', usuarioRoutes); //'usuario tiene que ser igual al de la DB'
-app.use('/login', loginRoutes);  
+app.use('/hospital', hospitalRoutes); //'hospital tiene que ser igual al de la DB, si la coleccion no existe esta se crea automaticamente'
+app.use('/medico', medicoRoutes); //'hospital tiene que ser igual al de la DB, si la coleccion no existe esta se crea automaticamente'
+app.use('/login', loginRoutes); 
+app.use('/busqueda', busquedaRoutes);
+app.use('/upload', uploadRoutes);
 app.use('/', appRoutes);
 
 //escuchar peticiones.
